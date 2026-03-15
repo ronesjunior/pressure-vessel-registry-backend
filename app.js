@@ -1,13 +1,33 @@
 import "dotenv/config";
-import express from "express"; // importa o módulo/biblioteca express
+import express from "express";
+import { errors } from "celebrate";
 import dbClient from "./db/db.js";
 import userRoute from "./routes/user.js";
 import vesselRoute from "./routes/vessel.js";
+import { requestLogger, errorLogger } from "./middlewares/logs.js";
+import error from "./middlewares/error.js";
 
-const app = express(); // chama a função express() contida na biblioteca express para usar os métodos contidos nela, como app.listen() e app.use()
-
+const app = express();
 const port = process.env.PORT || 3000;
 
+// middlewares gerais
+app.use(express.json());
+app.use(requestLogger);
+
+// rotas
+app.use("/user", userRoute);
+app.use("/vessel", vesselRoute);
+
+// logs de erro
+app.use(errorLogger);
+
+// erros do celebrate
+app.use(errors());
+
+// tratador final de erros
+app.use(error);
+
+// conectar no banco e subir servidor
 dbClient
   .connect()
   .then(() => {
@@ -20,9 +40,3 @@ dbClient
   .catch((err) => {
     console.error("Erro ao conectar no PostgreSQL:", err);
   });
-
-app.use(express.json());
-
-app.use("/user", userRoute);
-
-app.use("/vessel", vesselRoute);

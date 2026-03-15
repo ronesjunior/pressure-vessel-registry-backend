@@ -20,9 +20,15 @@
   },
   "homepage": "https://github.com/ronesjunior/pressure-vessel-registry-backend#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "celebrate": "^15.0.3",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "pg": "^8.20.0"
+    "express-winston": "^4.2.0",
+    "join": "^3.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.20.0",
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

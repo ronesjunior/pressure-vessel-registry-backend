@@ -1,4 +1,6 @@
 import dbClient from "../db/db.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export function getUsers(req, res) {
   dbClient
@@ -42,13 +44,16 @@ export function createUser(req, res) {
     return res.status(400).send({ message: "Preencha name, email e password" });
   }
 
-  dbClient
-    .query(
-      `INSERT INTO users (name, email, password)
-       VALUES ($1, $2, $3)
-       RETURNING id, name, email, created_at`,
-      [name, email, password],
-    )
+  bcrypt
+    .hash(password, 10)
+    .then((hashedPassword) => {
+      return dbClient.query(
+        `INSERT INTO users (name, email, password)
+         VALUES ($1, $2, $3)
+         RETURNING id, name, email, created_at`,
+        [name, email, hashedPassword],
+      );
+    })
     .then((result) => {
       res.status(201).send(result.rows[0]);
     })
@@ -81,42 +86,51 @@ export function loginUser(req, res) {
       const user = result.rows[0];
 
       if (!user) {
-        return res
-          .status(401)
-          .send({ message: "Email ou password incorretos" });
+        return Promise.reject({
+          statusCode: 401,
+          message: "Email ou password incorretos",
+        });
       }
 
-      if (user.password !== password) {
-        return res
-          .status(401)
-          .send({ message: "Email ou password incorretos" });
-      }
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          return Promise.reject({
+            statusCode: 401,
+            message: "Email ou password incorretos",
+          });
+        }
 
-      res.status(200).send({
-        message: "Login realizado com sucesso",
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          created_at: user.created_at,
-        },
+        const secret =
+          process.env.NODE_ENV !== "production"
+            ? "dev-secret"
+            : process.env.JWT_SECRET;
+
+        const token = jwt.sign({ id: user.id }, secret, {
+          expiresIn: "7d",
+        });
+
+        res.status(200).send({ token });
       });
     })
     .catch((error) => {
+      if (error.statusCode) {
+        return res.status(error.statusCode).send({ message: error.message });
+      }
+
       console.error("Erro ao fazer login:", error);
       res.status(500).send({ message: "Erro interno do servidor" });
     });
 }
 
 export function deleteUser(req, res) {
-  const { id } = req.params;
+  const userId = req.user.id;
 
   dbClient
     .query(
       `DELETE FROM users
        WHERE id = $1
        RETURNING id, name, email, created_at`,
-      [id],
+      [userId],
     )
     .then((result) => {
       if (result.rows.length === 0) {
@@ -135,7 +149,7 @@ export function deleteUser(req, res) {
 }
 
 export function updateUser(req, res) {
-  const { id } = req.params;
+  const userId = req.user.id;
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -144,14 +158,17 @@ export function updateUser(req, res) {
     });
   }
 
-  dbClient
-    .query(
-      `UPDATE users
-       SET name = $1, email = $2, password = $3
-       WHERE id = $4
-       RETURNING id, name, email, created_at`,
-      [name, email, password, id],
-    )
+  bcrypt
+    .hash(password, 10)
+    .then((hashedPassword) => {
+      return dbClient.query(
+        `UPDATE users
+         SET name = $1, email = $2, password = $3
+         WHERE id = $4
+         RETURNING id, name, email, created_at`,
+        [name, email, hashedPassword, userId],
+      );
+    })
     .then((result) => {
       if (result.rows.length === 0) {
         return res.status(404).send({ message: "Usuário não encontrado" });
