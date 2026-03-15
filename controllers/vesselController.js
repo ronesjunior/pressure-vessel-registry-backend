@@ -15,29 +15,37 @@ export function getVessel(req, res) {
 }
 
 export function createVessel(req, res) {
-  const { nome, material, volume } = req.body;
+  console.log("BODY RECEBIDO:", req.body);
 
-  if (!nome || !material || !volume) {
+  const { user_id, tag, nome, material, volume } = req.body;
+
+  if (!user_id || !tag || !nome || !material || volume == null) {
     return res
       .status(400)
-      .send({ message: "Preencha nome, material e volume" });
+      .send({ message: "Preencha user_id, tag, nome, material e volume" });
   }
 
   dbClient
     .query(
-      `INSERT INTO vessels (nome, material, volume)
-       VALUES ($1, $2, $3)
-       RETURNING id, nome, material, volume, created_at`,
-      [nome, material, volume],
+      `INSERT INTO vessels (user_id, tag, nome, material, volume)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, user_id, tag, nome, material, volume, created_at`,
+      [user_id, tag, nome, material, volume],
     )
     .then((result) => {
       res.status(201).send(result.rows[0]);
     })
     .catch((error) => {
-      console.error("Erro ao criar vaso:", error);
+      console.error("Erro ao criar vaso:");
 
       if (error.code === "23505") {
         return res.status(409).send({ message: "Vaso já cadastrado" });
+      }
+
+      if (error.code === "23503") {
+        return res
+          .status(400)
+          .send({ message: "user_id não existe na tabela users" });
       }
 
       res.status(500).send({ message: "Erro interno do servidor" });
