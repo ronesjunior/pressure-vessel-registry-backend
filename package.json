@@ -1,0 +1,30 @@
+{
+  "name": "pressure-vessel-registry-backend",
+  "version": "1.0.0",
+  "description": "backend projeto final tripleten desenvolvedor fullstack",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ronesjunior/pressure-vessel-registry-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ronesjunior/pressure-vessel-registry-backend/issues"
+  },
+  "homepage": "https://github.com/ronesjunior/pressure-vessel-registry-backend#readme",
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

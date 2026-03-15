@@ -1,2 +1,2 @@
 # pressure-vessel-registry-backend
-backend projeto final Tripleten
+backend projeto final tripleten desenvolvedor fullstack
