@@ -61,7 +61,7 @@ export function createUser(req, res) {
       console.error("Erro ao criar usuário:", error);
 
       if (error.code === "23505") {
-        return res.status(409).send({ message: "Email já cadastrado" });
+        return res.status(409).send({ message: "E-mail já cadastrado" });
       }
 
       res.status(500).send({ message: "Erro interno do servidor" });
@@ -70,7 +70,7 @@ export function createUser(req, res) {
 
 export function loginUser(req, res) {
   const { email, password } = req.body;
-
+  console.log("Login attempt:", { email, password });
   if (!email || !password) {
     return res.status(400).send({ message: "Preencha email e password" });
   }
@@ -108,8 +108,14 @@ export function loginUser(req, res) {
         const token = jwt.sign({ id: user.id }, secret, {
           expiresIn: "7d",
         });
-
-        res.status(200).send({ token });
+        res.status(200).send({
+          token,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          },
+        });
       });
     })
     .catch((error) => {

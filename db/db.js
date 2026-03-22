@@ -6,9 +6,7 @@ const dbClient = new Client({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl: false,
 });
 
 export default dbClient;

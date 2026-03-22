@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
 import { errors } from "celebrate";
 import dbClient from "./db/db.js";
 import userRoute from "./routes/user.js";
@@ -9,6 +10,15 @@ import error from "./middlewares/error.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// CORS
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
 // middlewares gerais
 app.use(express.json());
