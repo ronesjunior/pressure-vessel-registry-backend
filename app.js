@@ -40,15 +40,15 @@ app.use(errors());
 // tratador final de erros
 app.use(error);
 
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Servidor rodando na porta ${port}`);
+});
+
 // conectar no banco e subir servidor
 dbClient
   .connect()
   .then(() => {
     console.log("Conectado ao PostgreSQL");
-
-    app.listen(port, "0.0.0.0", () => {
-      console.log(`Servidor rodando na porta ${port}`);
-    });
   })
   .catch((err) => {
     console.error("Erro ao conectar no PostgreSQL:", err);
