@@ -14,7 +14,10 @@ const port = process.env.PORT || 3000;
 // CORS
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://pressure-vessel-registry-frontend.vercel.app",
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
@@ -43,7 +46,7 @@ dbClient
   .then(() => {
     console.log("Conectado ao PostgreSQL");
 
-    app.listen(port, () => {
+    app.listen(port, "0.0.0.0", () => {
       console.log(`Servidor rodando na porta ${port}`);
     });
   })
