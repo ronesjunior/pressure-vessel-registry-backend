@@ -1,0 +1,11 @@
+// Database password supabase = Parador@2026
+
+const SUPABASE_URL = "https://zvnojeelyngjjikdcihm.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2bm9qZWVseW5namppa2RjaWhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDY0NzQsImV4cCI6MjA4ODQyMjQ3NH0.DznTpwNAkFwePpbIIiqS0E0cl7FN6gVGCwhabAfzZhY";
+
+email: rones@rocketmail.com
+senha: 1234
+
+email: erica@erica.com.br
+senha: 123456
+
